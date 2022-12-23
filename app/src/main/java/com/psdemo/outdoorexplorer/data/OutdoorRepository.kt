@@ -5,11 +5,11 @@ import androidx.lifecycle.LiveData
 interface OutdoorRepository {
     fun getAllActivities(): LiveData<List<Activity>>
 
-    fun getAllLocations(): LiveData<List<Location>>
+    fun getAllLocations(): LiveData<List<MyLocation>>
 
     fun getActivityWithLocations(activityId: Int): LiveData<ActivityWithLocations>
 
-    fun getLocationById(locationId: Int): Location
+    fun getLocationById(locationId: Int): MyLocation
 
     fun getLocationWithActivities(locationId: Int): LiveData<LocationWithActivities>
 

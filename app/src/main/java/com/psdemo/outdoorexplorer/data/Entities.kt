@@ -1,5 +1,6 @@
 package com.psdemo.outdoorexplorer.data
 
+import android.location.Location
 import androidx.room.*
 import com.google.android.gms.location.Geofence
 
@@ -12,7 +13,7 @@ data class Activity(
 )
 
 @Entity
-data class Location(
+data class MyLocation(
     @PrimaryKey(autoGenerate = true) val locationId: Int = 0,
     val title: String,
     val description: String,
@@ -21,8 +22,8 @@ data class Location(
     val longitude: Double,
     val geofenceRadius: Float
 ) {
-    fun getDistanceInMiles(currentLocation: android.location.Location): Float {
-        val coordinates = android.location.Location("")
+    fun getDistanceInMiles(currentLocation: Location): Float {
+        val coordinates = Location("")
         coordinates.latitude = latitude
         coordinates.longitude = longitude
         val meters = currentLocation.distanceTo(coordinates)
@@ -43,11 +44,11 @@ data class ActivityWithLocations(
         entityColumn = "locationId",
         associateBy = Junction(ActivityLocationCrossRef::class)
     )
-    val locations: List<Location>
+    val locations: List<MyLocation>
 )
 
 data class LocationWithActivities(
-    @Embedded val location: Location,
+    @Embedded val location: MyLocation,
     @Relation(
         parentColumn = "locationId",
         entityColumn = "activityId",

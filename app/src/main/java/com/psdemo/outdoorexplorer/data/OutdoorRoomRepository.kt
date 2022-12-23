@@ -12,7 +12,7 @@ class OutdoorRoomRepository(private val outdoorDao: OutdoorDao) : OutdoorReposit
     override fun getActivityWithLocations(activityId: Int) =
         outdoorDao.getActivityWithLocations(activityId)
 
-    override fun getLocationById(locationId: Int): Location =
+    override fun getLocationById(locationId: Int): MyLocation =
         GetLocationAsyncTask(outdoorDao).execute(locationId).get()
 
     override fun getLocationWithActivities(locationId: Int) =
@@ -22,8 +22,8 @@ class OutdoorRoomRepository(private val outdoorDao: OutdoorDao) : OutdoorReposit
         ToggleAsyncTask(outdoorDao).execute(id).get()
 
     private class GetLocationAsyncTask(val outdoorDao: OutdoorDao) :
-        AsyncTask<Int, Unit, Location>() {
-        override fun doInBackground(vararg ids: Int?): Location {
+        AsyncTask<Int, Unit, MyLocation>() {
+        override fun doInBackground(vararg ids: Int?): MyLocation {
             return outdoorDao.getLocationById(ids[0]!!)
         }
     }
@@ -44,7 +44,7 @@ class OutdoorRoomRepository(private val outdoorDao: OutdoorDao) : OutdoorReposit
             )
         }
 
-        private fun createGeofence(location: Location): Geofence {
+        private fun createGeofence(location: MyLocation): Geofence {
             return Geofence.Builder()
                 .setRequestId(location.locationId.toString())
                 .setCircularRegion(

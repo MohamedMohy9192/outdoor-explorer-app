@@ -9,7 +9,7 @@ import com.google.gson.GsonBuilder
 import java.io.IOException
 
 @Database(
-    entities = [Activity::class, Location::class, ActivityLocationCrossRef::class],
+    entities = [Activity::class, MyLocation::class, ActivityLocationCrossRef::class],
     version = 1,
     exportSchema = false
 )
@@ -57,7 +57,7 @@ abstract class OutdoorRoomDatabase : RoomDatabase() {
 
             data = getJsonDataFromAsset(context, "locations.json")
             db.outdoorDao()
-                .insertLocations(gson.fromJson(data, Array<Location>::class.java).toList())
+                .insertLocations(gson.fromJson(data, Array<MyLocation>::class.java).toList())
 
             data = getJsonDataFromAsset(context, "crossref.json")
             db.outdoorDao().insertActivityLocationCrossRefs(
