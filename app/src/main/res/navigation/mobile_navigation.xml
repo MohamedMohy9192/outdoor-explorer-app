@@ -58,9 +58,9 @@
     </fragment>
     <fragment
         android:id="@+id/navigation_location"
-        android:name="com.psdemo.outdoorexplorer.ui.location.LocationFragment"
+        android:name="com.psdemo.outdoorexplorer.ui.location.LocationDetailFragment"
         android:label="@string/title_location"
-        tools:layout="@layout/fragment_location">
+        tools:layout="@layout/fragment_location_detail">
         <argument
             android:name="locationId"
             android:defaultValue="0"

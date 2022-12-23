@@ -5,12 +5,11 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
-import com.psdemo.outdoorexplorer.databinding.FragmentLocationBinding
+import com.psdemo.outdoorexplorer.databinding.FragmentLocationDetailBinding
 
-class LocationFragment : Fragment() {
-    private var _binding: FragmentLocationBinding? = null
+class LocationDetailFragment : Fragment() {
+    private var _binding: FragmentLocationDetailBinding? = null
 
     // This property is only valid between onCreateView and
     // onDestroyView.
@@ -20,18 +19,18 @@ class LocationFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        _binding = FragmentLocationBinding.inflate(inflater, container, false)
+        _binding = FragmentLocationDetailBinding.inflate(inflater, container, false)
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        val locationViewModel = ViewModelProvider(this)
-            .get(LocationViewModel::class.java)
+        val locationDetailViewModel = ViewModelProvider(this)
+            .get(LocationDetailViewModel::class.java)
 
         arguments?.let { bundle ->
-            val passedArguments = LocationFragmentArgs.fromBundle(bundle)
-            locationViewModel.getLocation(passedArguments.locationId)
-                .observe(viewLifecycleOwner, Observer { wrapper ->
+            val passedArguments = LocationDetailFragmentArgs.fromBundle(bundle)
+            locationDetailViewModel.getLocation(passedArguments.locationId)
+                .observe(viewLifecycleOwner) { wrapper ->
                     with(binding) {
                         val location = wrapper.location
                         title.text = location.title
@@ -41,7 +40,7 @@ class LocationFragment : Fragment() {
                         listActivities.adapter = adapter
                         adapter.submitList(wrapper.activities.sortedBy { a -> a.title })
                     }
-                })
+                }
         }
     }
 

@@ -6,7 +6,7 @@ import com.psdemo.outdoorexplorer.data.OutdoorRepository
 import com.psdemo.outdoorexplorer.data.OutdoorRoomDatabase
 import com.psdemo.outdoorexplorer.data.OutdoorRoomRepository
 
-class LocationViewModel(application: Application) : AndroidViewModel(application) {
+class LocationDetailViewModel(application: Application) : AndroidViewModel(application) {
     private val outdoorRepository: OutdoorRepository
 
     init {
