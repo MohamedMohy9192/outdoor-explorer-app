@@ -1,46 +1,40 @@
 package com.psdemo.outdoorexplorer.ui.locations
 
+import android.location.Location
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.recyclerview.widget.DiffUtil
+import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.psdemo.outdoorexplorer.R
-import com.psdemo.outdoorexplorer.data.Location
-import kotlinx.android.synthetic.main.location_item.view.*
+import com.psdemo.outdoorexplorer.data.MyLocation
+import com.psdemo.outdoorexplorer.databinding.LocationItemBinding
+
 
 class LocationsAdapter(private val onClickListener: OnClickListener) :
-    RecyclerView.Adapter<LocationsAdapter.LocationHolder>() {
-    private var allLocations: List<Location> = ArrayList()
-    private var currentLocation: android.location.Location? = null
+    ListAdapter<MyLocation, LocationsAdapter.LocationHolder>(DiffCallback) {
+
+    private var currentLocation: Location? = null
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): LocationHolder {
-        val itemView = LayoutInflater.from(parent.context)
-            .inflate(R.layout.location_item, parent, false)
+        val itemView = LocationItemBinding
+            .inflate(LayoutInflater.from(parent.context), parent, false)
         return LocationHolder(itemView)
     }
 
-    override fun getItemCount(): Int {
-        return allLocations.size
-    }
-
-    fun setLocations(locations: List<Location>) {
-        allLocations = locations
-        notifyDataSetChanged()
-    }
-
-    fun setCurrentLocation(location: android.location.Location) {
+    fun setCurrentLocation(location: Location) {
         currentLocation = location
-        allLocations = allLocations.sortedBy { it.getDistanceInMiles(location) }
-        notifyDataSetChanged()
+        submitList(currentList.sortedBy { it.getDistanceInMiles(location) })
     }
 
     override fun onBindViewHolder(holder: LocationHolder, position: Int) {
-        holder.bind(allLocations[position], onClickListener)
+        holder.bind(getItem(position), onClickListener)
     }
 
-    inner class LocationHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        fun bind(location: Location, clickListener: OnClickListener) {
-            with(itemView) {
+    inner class LocationHolder(private val binding: LocationItemBinding) : RecyclerView.ViewHolder(binding.root) {
+        fun bind(location: MyLocation, clickListener: OnClickListener) {
+            with(binding) {
                 title.text = location.title
                 card.setOnClickListener { clickListener.onClick(location.locationId) }
 
@@ -48,7 +42,7 @@ class LocationsAdapter(private val onClickListener: OnClickListener) :
                     distanceIcon.visibility = View.VISIBLE
 
                     distance.visibility = View.VISIBLE
-                    distance.text = context.getString(
+                    distance.text = distance.context.getString(
                         R.string.distance_value,
                         location.getDistanceInMiles(currentLocation!!)
                     )
@@ -59,5 +53,16 @@ class LocationsAdapter(private val onClickListener: OnClickListener) :
 
     interface OnClickListener {
         fun onClick(id: Int)
+    }
+
+    companion object DiffCallback : DiffUtil.ItemCallback<MyLocation>() {
+        override fun areItemsTheSame(oldItem: MyLocation, newItem: MyLocation): Boolean {
+            return oldItem.locationId == newItem.locationId
+        }
+
+        override fun areContentsTheSame(oldItem: MyLocation, newItem: MyLocation): Boolean {
+            return oldItem == newItem
+        }
+
     }
 }

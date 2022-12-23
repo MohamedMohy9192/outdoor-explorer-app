@@ -1,49 +1,52 @@
 package com.psdemo.outdoorexplorer.ui.location
 
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
+import androidx.recyclerview.widget.DiffUtil
+import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import com.psdemo.outdoorexplorer.R
 import com.psdemo.outdoorexplorer.data.Activity
-import kotlinx.android.synthetic.main.location_activity_item.view.*
+import com.psdemo.outdoorexplorer.databinding.LocationActivityItemBinding
+
 
 class ActivitiesAdapter :
-    RecyclerView.Adapter<ActivitiesAdapter.ActivityHolder>() {
-    private var allActivities: List<Activity> = ArrayList()
+    ListAdapter<Activity, ActivitiesAdapter.ActivityHolder>(DiffCallback) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ActivityHolder {
-        val itemView = LayoutInflater.from(parent.context)
-            .inflate(R.layout.location_activity_item, parent, false)
+        val itemView = LocationActivityItemBinding
+            .inflate(LayoutInflater.from(parent.context), parent, false)
         return ActivityHolder(itemView)
     }
 
-    override fun getItemCount(): Int {
-        return allActivities.size
-    }
-
-    fun setActivities(activities: List<Activity>) {
-        allActivities = activities
-        notifyDataSetChanged()
-    }
-
     override fun onBindViewHolder(holder: ActivityHolder, position: Int) {
-        holder.bind(allActivities[position])
+        holder.bind(getItem(position))
     }
 
-    inner class ActivityHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+    inner class ActivityHolder(private val binding: LocationActivityItemBinding) :
+        RecyclerView.ViewHolder(binding.root) {
         fun bind(activity: Activity) {
-            with(itemView) {
+            with(binding) {
                 title.text = activity.title
 
                 val iconUri = "drawable/ic_${activity.icon}_black_24dp"
                 val imageResource: Int =
-                    context.resources.getIdentifier(
-                        iconUri, null, context.packageName
+                    icon.context.resources.getIdentifier(
+                        iconUri, null, icon.context.packageName
                     )
                 icon.setImageResource(imageResource)
                 icon.contentDescription = activity.title
             }
         }
+    }
+
+    companion object DiffCallback : DiffUtil.ItemCallback<Activity>() {
+        override fun areItemsTheSame(oldItem: Activity, newItem: Activity): Boolean {
+            return oldItem.activityId == newItem.activityId
+        }
+
+        override fun areContentsTheSame(oldItem: Activity, newItem: Activity): Boolean {
+            return oldItem == newItem
+        }
+
     }
 }
