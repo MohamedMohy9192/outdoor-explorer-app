@@ -4,8 +4,6 @@ import android.location.Location
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.recyclerview.widget.DiffUtil
-import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.psdemo.outdoorexplorer.R
 import com.psdemo.outdoorexplorer.data.MyLocation
@@ -13,8 +11,8 @@ import com.psdemo.outdoorexplorer.databinding.LocationItemBinding
 
 
 class LocationsAdapter(private val onClickListener: OnClickListener) :
-    ListAdapter<MyLocation, LocationsAdapter.LocationHolder>(DiffCallback) {
-
+    RecyclerView.Adapter<LocationsAdapter.LocationHolder>() {
+    private var allLocations: List<MyLocation> = ArrayList()
     private var currentLocation: Location? = null
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): LocationHolder {
@@ -23,13 +21,23 @@ class LocationsAdapter(private val onClickListener: OnClickListener) :
         return LocationHolder(itemView)
     }
 
+    override fun getItemCount(): Int {
+        return allLocations.size
+    }
+
+    fun setLocations(locations: List<MyLocation>) {
+        allLocations = locations
+        notifyDataSetChanged()
+    }
+
     fun setCurrentLocation(location: Location) {
         currentLocation = location
-        submitList(currentList.sortedBy { it.getDistanceInMiles(location) })
+        allLocations = allLocations.sortedBy { it.getDistanceInMiles(location) }
+        notifyDataSetChanged()
     }
 
     override fun onBindViewHolder(holder: LocationHolder, position: Int) {
-        holder.bind(getItem(position), onClickListener)
+        holder.bind(allLocations[position], onClickListener)
     }
 
     inner class LocationHolder(private val binding: LocationItemBinding) : RecyclerView.ViewHolder(binding.root) {
@@ -53,16 +61,5 @@ class LocationsAdapter(private val onClickListener: OnClickListener) :
 
     interface OnClickListener {
         fun onClick(id: Int)
-    }
-
-    companion object DiffCallback : DiffUtil.ItemCallback<MyLocation>() {
-        override fun areItemsTheSame(oldItem: MyLocation, newItem: MyLocation): Boolean {
-            return oldItem.locationId == newItem.locationId
-        }
-
-        override fun areContentsTheSame(oldItem: MyLocation, newItem: MyLocation): Boolean {
-            return oldItem == newItem
-        }
-
     }
 }
